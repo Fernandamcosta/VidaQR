@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VidaQR - Disco Edition (Boss Update)</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:ital,wght@0,900;1,900&family=Archivo+Black&display=swap" rel="stylesheet">
+
+    <style>
+        /* ================= ESTILOS ================= */
+        :root {
+            --bg-dark: #050505;
+            --text-white: #ffffff;
+            --text-gray: #b3b3b3;
+            --neon-purple: #a500ff;
+            --neon-pink: #ff00aa;
+            --neon-orange: #ff5e00;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            
+            /* JOGO */
+            --ui-bg: rgba(20, 0, 40, 0.85);
+            --neon-green: #39ff14;
+            --neon-red: #ff073a;
+            --neon-cyan: #00f3ff;
+            --neon-gold: #ffd700;
+            
+            --disco-1: linear-gradient(45deg, #2b0052, #000000, #3a0ca3);
+            --disco-2: linear-gradient(45deg, #380036, #000000, #cb2d3e);
+            --disco-3: linear-gradient(45deg, #0f0c29, #302b63, #24243e);
+            --disco-4: linear-gradient(45deg, #000000, #434343, #000000);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 
+            background-attachment: fixed;
+            color: var(--text-white);
+            overflow-x: hidden;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        body.game-mode {
+            background: #000;
+            overflow: hidden; 
+            user-select: none;
+        }
+
+        /* TIPOGRAFIA */
+        .lp-h1, .lp-h2 { font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; }
+        .lp-h1 {
+            font-size: 3.5rem; text-align: center; margin-bottom: 10px;
+            background: linear-gradient(to right, #c471ed, #f64f59);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0px 0px 30px rgba(246, 79, 89, 0.3);
+        }
+
+        .lp-h2 { font-size: 1.8rem; margin-bottom: 25px; border-left: 4px solid var(--neon-pink); padding-left: 15px; }
+        .lp-p { color: var(--text-gray); font-size: 1rem; margin-bottom: 20px; font-weight: 300; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+        header { padding: 60px 0 40px; text-align: center; }
+        .header-subtitle { font-family: 'Montserrat', sans-serif; letter-spacing: 4px; text-transform: uppercase; font-size: 0.9rem; opacity: 0.8; margin-bottom: 30px; }
+
+        .header-image-container img, .game-thumbnail {
+            width: 100%; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            filter: brightness(0.9) contrast(1.1); transition: transform 0.5s ease;
+        }
+        .header-image-container:hover img { transform: scale(1.01); filter: brightness(1); }
+
+        section {
+            background: var(--glass-bg); backdrop-filter: blur(10px); border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 40px; margin-bottom: 60px; position: relative; overflow: hidden;
+        }
+        section::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-purple), transparent);
+        }
+
+        .form-group { margin-bottom: 30px; position: relative; }
+        label { display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--neon-purple); margin-bottom: 8px; font-weight: 600; }
+        
+        /* Atualizado para suportar Selects bonitos */
+        input, select {
+            width: 100%; background: transparent; border: none; border-bottom: 2px solid #333; padding: 10px 0; 
+            color: #fff; font-size: 1.2rem; transition: 0.3s;
+            appearance: none; -webkit-appearance: none; /* Remove seta padrão do browser */
+        }
+        /* Adiciona seta customizada para selects apenas se quiser, mas o básico funciona */
+        select option { background: #1a0b2e; color: #fff; }
+
+        input:focus, select:focus { outline: none; border-bottom-color: var(--neon-pink); padding-left: 10px; }
+        small.form-text { display: block; margin-top: 8px; font-size: 0.75rem; color: #666; }
+
+        .btn-lp, button[type="submit"] {
+            width: 100%; padding: 20px; font-family: 'Montserrat', sans-serif; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 2px; cursor: pointer;
+            border: 2px solid var(--text-white); background: transparent; color: var(--text-white);
+            transition: all 0.3s ease; position: relative; overflow: hidden; z-index: 1;
+        }
+        .btn-lp:hover, button[type="submit"]:hover { color: #000; }
+        .btn-lp::after, button[type="submit"]::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%;
+            background: var(--text-white); z-index: -1; transition: width 0.3s ease;
+        }
+        .btn-lp:hover::after, button[type="submit"]:hover::after { width: 100%; }
+
+        button[type="submit"] { border-color: var(--neon-pink); color: var(--neon-pink); }
+        button[type="submit"]::after { background: var(--neon-pink); }
+        button[type="submit"]:hover { color: #fff; box-shadow: 0 0 20px var(--neon-pink); }
+
+        .game-image-wrapper { position: relative; margin: 30px 0; overflow: hidden; border-radius: 4px; }
+        .game-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.4s;
+        }
+        .game-overlay p { color: #fff; font-family: 'Montserrat', sans-serif; font-weight: bold; letter-spacing: 2px; border: 1px solid #fff; padding: 10px 20px; }
+        .game-image-wrapper:hover .game-overlay { opacity: 1; }
+
+        .resultado { display: none; text-align: center; border: 2px solid var(--neon-orange); background: rgba(0,0,0,0.8); }
+        #resultadoTexto span { display: block; font-size: 3rem; font-family: 'Montserrat', sans-serif; font-weight: 900; background: linear-gradient(to right, #ff9966, #ff5e62); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        #qrcode-container { background: #fff; padding: 15px; display: inline-block; border-radius: 8px; margin-top: 20px;}
+
+        footer { text-align: center; padding: 50px 0; font-size: 0.8rem; color: #555; border-top: 1px solid #222; margin-top: 50px; }
+
+        /* ================= JOGO ================= */
+        #game-wrapper { display: none; position: fixed; inset: 0; width: 100%; height: 100%; z-index: 9999; }
+        
+        #game-bg {
+            position: absolute; inset:0; z-index: -5; background: var(--disco-1); background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite; transition: background 2s ease;
+        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        #game-wrapper.level-2 #game-bg { background: var(--disco-2); }
+        #game-wrapper.level-3 #game-bg { background: var(--disco-3); }
+        #game-wrapper.level-4 #game-bg { background: var(--disco-4); }
+
+        .spotlight-container { position: absolute; inset: 0; pointer-events: none; z-index: -3; overflow: hidden; opacity: 0.6; mix-blend-mode: overlay; }
+        .beam {
+            position: absolute; top: -50%; left: 50%; width: 200px; height: 200vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent); transform-origin: top center;
+        }
+        .beam:nth-child(1) { animation: rotateBeam 8s ease-in-out infinite alternate; filter: blur(20px); }
+        .beam:nth-child(2) { animation: rotateBeam 6s ease-in-out infinite alternate-reverse; filter: blur(30px); background: linear-gradient(to bottom, rgba(255,0,255,0.3), transparent); }
+        @keyframes rotateBeam { from { transform: rotate(-45deg); } to { transform: rotate(45deg); } }
+
+        .disco-ball {
+            position: absolute; top: 10%; left: 50%; transform: translateX(-50%); width: 160px; height: 160px; border-radius: 50%; z-index: -2;
+            background: radial-gradient(circle at 30% 30%, #fff, #444 60%, #111 100%);
+            box-shadow: 0 0 60px rgba(255,255,255,0.8), 0 0 100px var(--neon-purple); overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .disco-foods { font-size: 60px; animation: rotateFoods 8s linear infinite reverse; z-index: 1; filter: drop-shadow(0 0 10px #fff); white-space: nowrap; }
+        @keyframes rotateFoods { 0% { transform: translateX(150px) rotate(0deg); } 100% { transform: translateX(-150px) rotate(-360deg); } }
+
+        .ground-grid {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 45%;
+            background: linear-gradient(rgba(0,0,0,0) 0%, #1a0b2e 100%),
+                repeating-linear-gradient(90deg, transparent 0, transparent 48px, var(--neon-pink) 50px),
+                repeating-linear-gradient(180deg, transparent 0, transparent 48px, var(--neon-cyan) 50px);
+            transform: perspective(500px) rotateX(60deg) scale(2); transform-origin: bottom center; z-index: -1;
+            box-shadow: 0 -40px 80px rgba(255, 0, 255, 0.2); animation: moveFloor 2s linear infinite;
+        }
+        @keyframes moveFloor { from { background-position: 0 0; } to { background-position: 0 100px; } }
+        @keyframes shake { 0%, 100% { transform: translate(0, 0); } 25% { transform: translate(-2px, 2px); } 75% { transform: translate(2px, -2px); } }
+
+        #ui { position:absolute; top:20px; left:20px; right:20px; z-index:40; display:flex; justify-content:space-between; pointer-events:none; }
+        .hud-box {
+            background: var(--ui-bg); padding: 15px 25px; border-radius: 8px; border: 2px solid var(--neon-purple); backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(165, 0, 255, 0.4); clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+        }
+        .avatar-row { display: flex; align-items: center; gap: 15px; }
+        .avatar-icon { width: 50px; height: 50px; background: var(--neon-cyan); border-radius: 8px; display:flex; align-items:center; justify-content:center; font-weight:900; border: 2px solid #fff; color: #000; font-style: italic; }
+        #healthBarWrap { width: 300px; height: 24px; background: #111; border-radius: 2px; overflow: hidden; border: 2px solid #555; transform: skewX(-15deg); }
+        #healthBar { width: 100%; height: 100%; background: linear-gradient(90deg, var(--neon-green), #fff); transition: width 0.1s; }
+        #score { font-family: 'Archivo Black', sans-serif; font-size: 32px; color: #fff; text-shadow: 2px 2px 0 #000, 0 0 10px var(--neon-pink); margin-top: 5px; line-height: 1; }
+        #levelIndicator { font-family: 'Archivo Black'; font-size: 18px; color: var(--neon-gold); text-shadow: 0 0 10px var(--neon-gold); }
+
+        #comboMeter {
+            position: absolute; top: 120px; left: 40px; font-family: 'Archivo Black'; font-size: 48px; color: var(--neon-cyan);
+            transform: skewX(-10deg) rotate(-5deg); text-shadow: 4px 4px 0 #000, 0 0 20px var(--neon-cyan);
+            opacity: 0; transition: opacity 0.2s, transform 0.1s; pointer-events: none; mix-blend-mode: screen;
+        }
+        .controls-info { text-align: right; color: rgba(255,255,255,0.9); font-size: 13px; line-height: 1.6; font-family: monospace; }
+        .key { background: #333; color: #fff; padding: 2px 8px; border-radius: 4px; font-weight: bold; border: 1px solid #777; display: inline-block; }
+        .key-action { background: var(--neon-red); border-color: #ff88aa; }
+        
+        canvas { display:block; width: 100%; height: 100%; }
+
+        #spotify-player-container {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1000; opacity: 0.8; transition: opacity 0.3s; width: 300px; height: 80px; display: none;
+            box-shadow: 0 0 30px rgba(30, 215, 96, 0.6); border-radius: 12px;
+        }
+        #spotify-player-container:hover { opacity: 1; }
+
+        #gameOver, #levelUpScreen {
+            position:absolute; inset:0; background: rgba(0,0,0,0.95); z-index: 100;
+            display:none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px);
+        }
+        #levelUpScreen { background: rgba(255, 0, 255, 0.2); }
+        h1.game-title { font-family: 'Archivo Black'; color: var(--neon-red); font-size: 80px; margin: 0; text-transform: uppercase; text-shadow: 0 0 40px var(--neon-red), 4px 4px 0 #fff; }
+        h2.level-title { font-family: 'Archivo Black'; color: var(--neon-gold); font-size: 60px; text-shadow: 0 0 30px var(--neon-gold), 3px 3px 0 #000; }
+        
+        .btn-game {
+            background: var(--neon-green); border: none; padding: 20px 60px; font-size: 24px; font-family: 'Archivo Black'; 
+            cursor: pointer; text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+            transition: all 0.2s; color: #000; box-shadow: 0 0 20px var(--neon-green); margin-top: 30px;
+        }
+        .btn-game:hover { transform: scale(1.1) rotate(-2deg); background: #fff; box-shadow: 0 0 50px #fff; }
+        
+        #levelProgressWrap { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 400px; height: 10px; background: #222; border: 1px solid #555; border-radius: 5px; overflow: hidden; box-shadow: 0 0 15px var(--neon-purple); }
+        #levelProgressBar { width: 0%; height: 100%; background: linear-gradient(90deg, #00f3ff, #ff00aa); transition: width 0.3s; }
+
+        @media (max-width: 768px) {
+            .lp-h1 { font-size: 2.5rem; }
+            section { padding: 20px; }
+            #spotify-player-container { bottom: 10px; right: 10px; width: 250px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= LANDING PAGE ================= -->
+    <div id="landing-page">
+        <div class="container">
+            <header>
+                <h1 class="lp-h1">VidaQR</h1>
+                <p class="header-subtitle">Estimate Your Life Expectancy</p>
+                <div class="header-image-container">
+                    <img src="/image/Generated Image topo.png" onerror="this.src='https://via.placeholder.com/900x400/222/fff?text=VidaQR+Interface'" alt="VidaQR Interface">
+                </div>
+            </header>
+
+            <main>
+                <section class="intro">
+                    <h2 class="lp-h2">The Project</h2>
+                    <p class="lp-p">VidaQR analyzes your life habits to calculate your timeline and provide personalized intel. Welcome to the next generation of health tracking.</p>
+                </section>
+
+                <section class="game-preview">
+                    <h2 class="lp-h2">Jornada Saudável</h2>
+                    <p class="lp-p">Experience our interactive 3D world. Level up your stats in real life.</p>
+                    <div class="game-image-wrapper">
+                        <img src="/image/image.city.png" onerror="this.src='https://via.placeholder.com/900x400/300/fff?text=Game+City+Preview'" alt="Game Preview" class="game-thumbnail">
+                        <div class="game-overlay"><p>READY TO FIGHT?</p></div>
+                    </div>
+                    <button class="btn-lp" onclick="initGameTransition()">JOGAR AGORA</button>
+                </section>
+
+                <section class="form-section">
+                    <h2 class="lp-h2">Insira seus Dados</h2>
+                    <form id="vidaForm">
+                        <div class="form-group">
+                            <label for="idade">Idade Atual</label>
+                            <input type="number" id="idade" name="idade" min="1" max="120" required placeholder="Ex: 25">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="genero">Gênero Biológico</label>
+                            <select id="genero" name="genero" required>
+                                <option value="homem">Masculino</option>
+                                <option value="mulher">Feminino</option>
+                            </select>
+                            <small class="form-text">*Dados estatísticos variam conforme gênero.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sono">Sono Médio (horas/dia)</label>
+                            <input type="number" id="sono" name="sono" min="0" max="24" required placeholder="Ex: 7">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="atividade">Atividade Física</label>
+                            <select id="atividade" name="atividade" required>
+                                <option value="sedentario">Sedentário (Pouco ou nenhum)</option>
+                                <option value="moderado">Moderado (1-3 dias/semana)</option>
+                                <option value="ativo">Ativo (4+ dias/semana)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fumar">Você fuma?</label>
+                            <select id="fumar" name="fumar" required>
+                                <option value="nao">Não</option>
+                                <option value="sim">Sim</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="alimentacao">Como é sua alimentação?</label>
+                            <select id="alimentacao" name="alimentacao" required>
+                                <option value="balanceada">Balanceada (Frutas/Verduras/Pouco Processado)</option>
+                                <option value="media">Média (Alguns processados)</option>
+                                <option value="ruim">Ruim (Muito Fast Food/Açúcar)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit">Calcular Expectativa</button>
+                    </form>
+                </section>
+
+                <section id="resultado" class="resultado">
+                    <h2 class="lp-h2">Analysis Complete</h2>
+                    <p id="resultadoTexto"></p>
+                    <div id="qrcode-container"></div>
+                </section>
+            </main>
+
+            <footer>
+                <p>VidaQR © 2025 // Projeto Integrador ADS</p>
+                <p>Rockstar aesthetic inspired design.</p>
+            </footer>
+        </div>
+    </div>
+    
+    <!-- ================= GAME WRAPPER ================= -->
+    <div id="game-wrapper">
+        <div id="game-bg"></div>
+        <div class="spotlight-container"><div class="beam"></div><div class="beam"></div></div>
+        <div class="disco-ball"><div class="disco-foods">🥦 🍎 🥑 💧 🥕</div></div>
+        <div class="ground-grid"></div>
+
+        <div id="ui">
+            <div class="left-hud">
+                <div class="hud-box player-stats">
+                    <div id="levelIndicator">NÍVEL 1: FAST FOOD ALLEY</div>
+                    <div class="avatar-row">
+                        <div class="avatar-icon">FIST</div>
+                        <div>
+                            <span style="font-size:11px;color:#ccc;font-weight:700;letter-spacing:1px">VITALIDADE</span>
+                            <div id="healthBarWrap"><div id="healthBar"></div></div>
+                        </div>
+                    </div>
+                    <div id="score">0 PTS</div>
+                </div>
+            </div>
+            <div class="right-hud">
+                <div class="hud-box controls-info">
+                    MOVER: <span class="key">←</span> <span class="key">→</span><br>
+                    PULAR: <span class="key">↑</span><br>DASH: <span class="key">SHIFT</span><br>
+                    SOCAR: <span class="key key-action">ESPAÇO</span><br>
+                    ESPECIAL: <span class="key" style="background:gold;color:black">X</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="comboMeter">COMBO x3</div>
+        <div id="levelProgressWrap"><div id="levelProgressBar"></div></div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="levelUpScreen">
+            <h2 class="level-title">NÍVEL CONCLUÍDO!</h2>
+            <p style="color:#fff;font-size:20px">Prepare-se para o próximo round...</p>
+        </div>
+
+        <div id="gameOver">
+            <h1 class="game-title">GAME OVER</h1>
+            <p style="color:#fff;font-size:24px;margin-bottom:10px">O Sedentarismo venceu.</p>
+            <button class="btn-game" onclick="restartGame()">LUTAR NOVAMENTE</button>
+        </div>
+        
+        <div id="spotify-player-container"><div id="embed-iframe"></div></div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
+
+    <script>
+        // --- LOGICA LANDING PAGE (ATUALIZADA) ---
+        document.getElementById('vidaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerText; 
+            btn.innerText = "CALCULANDO..."; 
+            btn.style.opacity = "0.7";
+            
+            setTimeout(() => {
+                // 1. Coleta de Dados
+                const idade = parseInt(document.getElementById('idade').value) || 0;
+                const sono = parseInt(document.getElementById('sono').value) || 0;
+                const genero = document.getElementById('genero').value;
+                const atividade = document.getElementById('atividade').value;
+                const fumar = document.getElementById('fumar').value;
+                const alimentacao = document.getElementById('alimentacao').value;
+
+                // 2. Cálculo Baseado em Dados Reais (Estimativa Simplificada)
+                // Base IBGE/OMS aproximada: ~76 anos
+                let expectativa = 76;
+
+                // Fator Gênero (Mulheres tendem a viver ~5-7 anos a mais)
+                if (genero === 'mulher') expectativa += 5;
+
+                // Fator Fumo (Tabagismo reduz cerca de 10 anos de vida segundo estudos)
+                if (fumar === 'sim') expectativa -= 10;
+
+                // Fator Atividade Física
+                if (atividade === 'sedentario') expectativa -= 4; // Risco maior
+                else if (atividade === 'moderado') expectativa += 2; // Benefício
+                else if (atividade === 'ativo') expectativa += 4; // Alto benefício
+
+                // Fator Sono (Ideal 7-9h. Muito pouco ou muito excesso é prejudicial)
+                if (sono < 6 || sono > 10) expectativa -= 3;
+
+                // Fator Alimentação
+                if (alimentacao === 'ruim') expectativa -= 5; // Aumenta risco de doenças cardiovasculares
+                else if (alimentacao === 'balanceada') expectativa += 3;
+
+                // Correção Lógica: Se a expectativa calculada for menor que a idade atual,
+                // assume-se uma sobrevida estatística mínima (ninguém morre no passado).
+                if (expectativa <= idade) {
+                    expectativa = idade + 2; // Estimativa mínima
+                }
+
+                // 3. Exibição
+                document.getElementById('resultado').style.display = 'block';
+                document.getElementById('resultado').scrollIntoView({ behavior: 'smooth' });
+                
+                let mensagemFinal = `${expectativa} ANOS`;
+                let corResultado = "#39ff14"; // Verde neon
+
+                // Muda cor se a expectativa for baixa comparada à média
+                if (expectativa < 75) corResultado = "#ff073a"; // Vermelho neon
+
+                document.getElementById('resultadoTexto').innerHTML = 
+                    `BASEADO NOS SEUS DADOS:<br>
+                    <span style="background: linear-gradient(to right, ${corResultado}, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    ${mensagemFinal}
+                    </span>
+                    <small style="color: #aaa; font-size: 0.8rem; display:block; margin-top:10px">
+                    Melhore sua alimentação e atividades para aumentar este número!
+                    </small>`;
+                
+                document.getElementById('qrcode-container').innerHTML = ""; 
+                new QRCode(document.getElementById('qrcode-container'), { text: "https://vidaqr.com/resultado", width: 128, height: 128 });
+                
+                btn.innerText = originalText; 
+                btn.style.opacity = "1";
+            }, 1500);
+        });
+
+        // ================= JOGO (NÃO ALTERADO) =================
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSoundEffect(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'jump') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(500, now + 0.15);
+                gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            } else if (type === 'hit') {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
+                gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            } else if (type === 'collect') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            }
+            osc.start(now); osc.stop(now + 0.15);
+        }
+
+        let spotifyController;
+        window.onSpotifyIframeApiReady = (IFrameAPI) => {
+            IFrameAPI.createController(document.getElementById('embed-iframe'), {
+                width: '100%', height: '80', uri: 'spotify:track:6e2OwnkapOwUDfhz6AP9iC'
+            }, (EmbedController) => { spotifyController = EmbedController; });
+        };
+
+        function initGameTransition() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('game-wrapper').style.display = 'block';
+            document.getElementById('spotify-player-container').style.display = 'block';
+            document.body.classList.add('game-mode');
+            resize(); gameActive = true;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            if(spotifyController) try { spotifyController.play(); } catch(e) {}
+            loop();
+        }
+        
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize);
+
+        // --- VARIAVEIS GLOBAIS ---
+        let gameActive = false;
+        let timeScale = 1.0; 
+        let frame = 0;
+        let score = 0;
+        let health = 100;
+        let comboCount = 0;
+        let comboTimer = 0;
+        const GROUND_Y_OFFSET = 120; 
+        let groundY = canvas.height - GROUND_Y_OFFSET;
+
+        let currentLevel = 1;
+        let levelProgress = 0;
+        let levelTarget = 10;
+        let isBossActive = false;
+
+        const levelData = {
+            1: { name: "RUA DO FAST FOOD", target: 8, bgClass: "", spawnRate: 100, types: ["burger", "fries"] },
+            2: { name: "AVENIDA DO AÇÚCAR", target: 12, bgClass: "level-2", spawnRate: 80, types: ["fries", "soda", "pizza"] },
+            3: { name: "BECO DA GORDURA TRANS", target: 15, bgClass: "level-3", spawnRate: 60, types: ["burger", "pizza", "soda"] },
+            4: { name: "PESADELO NEON", target: 20, bgClass: "level-4", spawnRate: 50, types: ["burger", "fries", "pizza", "soda"] }
+        };
+
+        // === FÍSICA OTIMIZADA ===
+        let player = {
+            x: 100, y: 0, w: 50, h: 80, vx: 0, vy: 0, 
+            speed: 24,          // MUITO RÁPIDO
+            jumpPower: 24,      // PULO CURTO
+            gravity: 3.0,       // GRAVIDADE PESADA
+            acceleration: 5.0,  
+            friction: 0.75,
+            grounded: false, doubleJump: true, facingRight: true,
+            isAttacking: false, attackTimer: 0, dashCooldown: 0, isDashing: false, invulTimer: 0
+        };
+
+        let enemies = [];
+        let bossProjectiles = []; // ARRAY DE TIROS DO BOSS
+        let fallingItems = [];
+        let particles = [];
+        let damageNumbers = [];
+        let keys = {};
+
+        window.addEventListener('keydown', e => {
+            if(!gameActive) return;
+            keys[e.code] = true;
+            
+            if (e.code === "ArrowUp" || e.code === "KeyW") {
+                if (player.grounded) {
+                    player.vy = -player.jumpPower; player.grounded = false; player.doubleJump = true;
+                    createDust(player.x + player.w/2, player.y + player.h); playSoundEffect('jump');
+                } else if (player.doubleJump && !keys.jumpLocked) {
+                    player.vy = -player.jumpPower * 0.8; player.doubleJump = false;
+                    createParticles(player.x + player.w/2, player.y + player.h, "#fff", 5); playSoundEffect('jump');
+                }
+                keys.jumpLocked = true;
+            }
+            if (e.code === "ShiftLeft" && player.dashCooldown <= 0) {
+                player.isDashing = true; player.dashCooldown = 50; player.invulTimer = 15; 
+                player.vx = player.facingRight ? 60 : -60; player.vy = 0;
+                createShockwave(player.x + player.w/2, player.y + player.h/2, "#00f3ff"); playSoundEffect('jump');
+            }
+            if (e.code === "Space") {
+                if (!player.isAttacking) {
+                    player.isAttacking = true; player.attackTimer = 15; 
+                    if(player.grounded) player.vx = 0; 
+                    checkPunchCombat();
+                }
+            }
+            if (e.code === "KeyX") triggerUltimate();
+        });
+
+        window.addEventListener('keyup', e => {
+            keys[e.code] = false;
+            if (e.code === "ArrowUp" || e.code === "KeyW") keys.jumpLocked = false;
+        });
+
+        // --- GAMEPLAY FUNCTIONS ---
+        function triggerUltimate() {
+            if (score < 500) return; 
+            score -= 500; screenShake(20); createShockwave(canvas.width/2, canvas.height/2, "#ffd700", 2000); 
+            playSoundEffect('collect');
+            enemies.forEach(e => {
+                if(e.isBoss) { e.hp -= 200; e.hitStun = 60; spawnDamageNumber(200, e.x, e.y - 100, "#ffd700", 50); } 
+                else { killEnemy(e, "ULTIMATE!", 0, true); }
+            });
+            enemies = enemies.filter(e => e.hp > 0);
+        }
+
+        function addCombo() {
+            comboCount++; comboTimer = 100;
+            let cm = document.getElementById("comboMeter"); cm.innerText = "COMBO x" + comboCount;
+            cm.style.opacity = 1; cm.style.transform = `skewX(-10deg) rotate(-5deg) scale(${1 + comboCount/10})`;
+        }
+
+        function checkPunchCombat() {
+            let reach = player.grounded ? 120 : 160; 
+            let heightTolerance = player.grounded ? 100 : 160; 
+
+            enemies.forEach(e => {
+                let dist = Math.abs((player.x + player.w/2) - e.x);
+                let dy = Math.abs((player.y + player.h/2) - (e.y - e.h/2));
+                let facing = (player.facingRight && e.x > player.x) || (!player.facingRight && e.x < player.x);
+                
+                if (dist < reach && dy < heightTolerance && facing) {
+                    let dmg = 35 + Math.random() * 10; 
+                    if(!player.grounded) dmg *= 1.5;
+                    e.hp -= dmg; e.hitStun = 20; e.vx = player.facingRight ? 25 : -25; e.vy = -8; 
+                    playSoundEffect('hit'); screenShake(5);
+                    createParticles(e.x, e.y - 40, "#ffaa00", 8); spawnDamageNumber(Math.floor(dmg), e.x, e.y - 80, "#fff", 30);
+                    if (e.hp <= 0) killEnemy(e); else addCombo();
+                }
+            });
+        }
+
+        function killEnemy(e, msg="K.O.!", bonus=0, instant=false) {
+            if(e.dead) return; e.dead = true; e.hp = 0;
+            if(e.isBoss) {
+                startSlowMotion(0.2, 120); screenShake(30); score += 1000; msg = "BOSS DOWN!";
+                createShockwave(e.x, e.y, "#ff00de", 500);
+                spawnDamageNumber(msg, e.x, e.y - 150, "#ff00de", 60); setTimeout(nextLevel, 2000);
+                bossProjectiles = []; // Limpa tiros do boss ao morrer
+            } else {
+                score += (200 + bonus + (comboCount * 10)); levelProgress++;
+                spawnDamageNumber(msg, e.x, e.y - 120, "#ffff00", 40); addCombo();
+            }
+            createShockwave(e.x, e.y - 30, "#ff5500"); createParticles(e.x, e.y - 30, "#ff073a", 20);
+        }
+
+        function nextLevel() {
+            if(!gameActive) return;
+            const overlay = document.getElementById("levelUpScreen"); overlay.style.display = "flex"; gameActive = false; 
+            setTimeout(() => {
+                overlay.style.display = "none"; gameActive = true;
+                currentLevel++; if(currentLevel > 4) currentLevel = 4;
+                levelProgress = 0; isBossActive = false; enemies = []; bossProjectiles = [];
+                health = Math.min(100, health + 50); levelTarget = Math.floor(levelTarget * 1.5);
+                document.getElementById('game-wrapper').className = levelData[currentLevel].bgClass;
+                updateUI(); loop();
+            }, 3000);
+        }
+        
+        // --- SPAWN PROJECTILE ---
+        function spawnBossProjectile(x, y) {
+            let dx = (player.x + player.w/2) - x;
+            let dy = (player.y + player.h/2) - y;
+            let angle = Math.atan2(dy, dx);
+            let speed = 12; // Velocidade do tiro
+            
+            bossProjectiles.push({
+                x: x, y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                size: 20
+            });
+        }
+
+        function update() {
+            if (!gameActive) return;
+            if(timeScale < 1.0) { timeScale += 0.02; if(timeScale > 1.0) timeScale = 1.0; }
+            groundY = canvas.height - GROUND_Y_OFFSET;
+
+            // Player Physics
+            if (player.dashCooldown > 0) player.dashCooldown -= timeScale;
+            if (player.invulTimer > 0) player.invulTimer -= timeScale;
+            
+            if (player.isDashing) {
+                player.vx *= 0.9; if(player.dashCooldown < 35) player.isDashing = false;
+                createParticles(player.x+player.w/2, player.y+player.h/2, "#00f3ff", 1);
+            } else {
+                if (keys["ArrowLeft"] || keys["KeyA"]) { player.vx -= player.acceleration * timeScale; if(!player.isAttacking) player.facingRight = false; }
+                else if (keys["ArrowRight"] || keys["KeyD"]) { player.vx += player.acceleration * timeScale; if(!player.isAttacking) player.facingRight = true; }
+                else { player.vx *= player.friction; }
+                
+                if (player.vx > player.speed) player.vx = player.speed;
+                if (player.vx < -player.speed) player.vx = -player.speed;
+                if (Math.abs(player.vx) < 0.5) player.vx = 0;
+            }
+            
+            player.vy += player.gravity * timeScale; 
+            player.x += player.vx * timeScale; 
+            player.y += player.vy * timeScale;
+
+            if (player.y > groundY - player.h) {
+                player.y = groundY - player.h; if(player.vy > 15) createDust(player.x+player.w/2, player.y+player.h); 
+                player.vy = 0; player.grounded = true; player.doubleJump = false;
+            }
+            if (player.x < 0) player.x = 0; if (player.x > canvas.width - player.w) player.x = canvas.width - player.w;
+            if (player.attackTimer > 0) player.attackTimer -= timeScale; else player.isAttacking = false;
+            if(comboTimer > 0) { comboTimer -= timeScale; } else { comboCount = 0; document.getElementById("comboMeter").style.opacity = 0; }
+
+            // Enemies Update
+            let currentLvlData = levelData[currentLevel];
+            let progressPct = Math.min(100, (levelProgress / levelTarget) * 100); if(isBossActive) progressPct = 100;
+            document.getElementById("levelProgressBar").style.width = progressPct + "%";
+
+            if(levelProgress >= currentLvlData.target && !isBossActive) spawnBoss();
+            if (!isBossActive && frame % Math.floor(currentLvlData.spawnRate / timeScale) === 0 && enemies.length < 6) spawnEnemy(currentLvlData.types);
+            
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                let e = enemies[i];
+                if (e.hitStun > 0) { e.hitStun -= timeScale; e.x += e.vx * timeScale; e.vx *= 0.9; } 
+                else {
+                    // BOSS SHOOT LOGIC
+                    if(e.isBoss) {
+                        e.shootTimer--;
+                        if(e.shootTimer <= 0) {
+                            e.shootTimer = 60; // 1 segundo
+                            spawnBossProjectile(e.x, e.y + e.h/2);
+                        }
+                    }
+                    
+                    let speed = e.baseSpeed + (currentLevel * 0.8);
+                    if (e.x < player.x) e.vx += 0.5 * timeScale; else e.vx -= 0.5 * timeScale;
+                    if(e.vx > speed) e.vx = speed; if(e.vx < -speed) e.vx = -speed;
+                    e.x += e.vx * timeScale;
+                }
+                
+                if(e.isBoss && e.y > groundY - 50) e.vy -= 0.5;
+                if(e.y < groundY) e.vy += 0.8 * timeScale; 
+                e.y += e.vy * timeScale; if(e.y > groundY) { e.y = groundY; e.vy = 0; }
+                
+                if (e.hp <= 0 && e.dead) { enemies.splice(i, 1); continue; }
+
+                // Stomp
+                let dist = Math.abs((player.x + player.w/2) - e.x); 
+                if (player.vy > 0 && (player.y + player.h) >= (e.y - e.h) && (player.y + player.h) <= (e.y + 30) && dist < e.w) {
+                    if(e.isBoss) { 
+                        player.vy = -18; e.hp -= 30; e.hitStun = 20; e.vx = 0; 
+                        spawnDamageNumber("30", e.x, e.y-e.h, "#fff", 30); createParticles(e.x, e.y - e.h/2, "#fff", 5); playSoundEffect('hit');
+                    } 
+                    else { 
+                        e.hp = 0; player.vy = -18; killEnemy(e, "ESMAGOU!"); enemies.splice(i, 1); continue; playSoundEffect('hit');
+                    }
+                }
+                // Dano Enemy
+                else if (dist < e.w/1.8 && Math.abs((player.y + player.h/2) - (e.y - e.h/2)) < e.h/1.8 && !player.isDashing && e.hitStun <= 0 && player.invulTimer <= 0) {
+                    let dmg = e.isBoss ? 25 : 5 + (currentLevel); health -= dmg; player.invulTimer = 30; 
+                    screenShake(10); spawnDamageNumber("-" + Math.floor(dmg), player.x, player.y - 50, "#ff0000", 25);
+                    player.vx = (player.x - e.x) > 0 ? 15 : -15; player.vy = -10; e.hitStun = 20; comboCount = 0; playSoundEffect('hit');
+                }
+            }
+            
+            // PROJECTILES UPDATE
+            for (let i = bossProjectiles.length - 1; i >= 0; i--) {
+                let p = bossProjectiles[i];
+                p.x += p.vx * timeScale;
+                p.y += p.vy * timeScale;
+                
+                // Colisão com Player
+                if (player.invulTimer <= 0 && !player.isDashing && 
+                    p.x > player.x && p.x < player.x + player.w && 
+                    p.y > player.y && p.y < player.y + player.h) {
+                        
+                    health -= 15; score -= 150; // PENALIDADE DE PONTOS
+                    player.invulTimer = 30;
+                    player.vx = p.vx > 0 ? 15 : -15; // Knockback
+                    player.vy = -5;
+                    screenShake(10);
+                    spawnDamageNumber("-150 PTS", player.x, player.y - 80, "#ffff00", 30);
+                    spawnDamageNumber("GORDURA!", player.x, player.y - 40, "#ff0000", 25);
+                    bossProjectiles.splice(i, 1);
+                    playSoundEffect('hit');
+                    continue;
+                }
+                
+                // Remove se sair da tela
+                if (p.x < -100 || p.x > canvas.width + 100 || p.y > canvas.height) {
+                    bossProjectiles.splice(i, 1);
+                }
+            }
+
+            if (frame % 400 === 0) spawnItem();
+            for (let i = fallingItems.length - 1; i >= 0; i--) {
+                let item = fallingItems[i]; item.y += item.speed * timeScale;
+                if (item.x > player.x && item.x < player.x+player.w && item.y > player.y && item.y < player.y+player.h) {
+                    health = Math.min(100, health + 25); score += 150;
+                    createShockwave(player.x+player.w/2, player.y+player.h/2, "#39ff14");
+                    spawnDamageNumber("DELÍCIA!", player.x, player.y - 60, "#39ff14", 25); fallingItems.splice(i, 1); continue; playSoundEffect('collect');
+                }
+                if (item.y > canvas.height) fallingItems.splice(i, 1);
+            }
+
+            updateParticles(); updateUI();
+            if (health <= 0) { health = 0; gameActive = false; document.getElementById("gameOver").style.display = "flex"; }
+            frame++;
+        }
+
+        // --- HELPERS ---
+        function spawnEnemy(allowedTypes) {
+            const typeMap = { "burger": {e:"🍔",hp:100,spd:1.5,size:60}, "fries": {e:"🍟",hp:60,spd:3.0,size:50}, "pizza": {e:"🍕",hp:80,spd:2.2,size:55}, "soda": {e:"🥤",hp:50,spd:4.0,size:45} };
+            let t = typeMap[allowedTypes[Math.floor(Math.random()*allowedTypes.length)]];
+            enemies.push({ x: Math.random()<0.5?-60:canvas.width+60, y: groundY, vx:0, vy:0, emoji:t.e, hp:t.hp, maxHp:t.hp, hitStun:0, baseSpeed: t.spd, w: t.size, h: t.size, isBoss: false, dead: false });
+        }
+        function spawnBoss() {
+            isBossActive = true; screenShake(30);
+            enemies.push({ 
+                x: canvas.width/2, y: -200, vx: 0, vy: 5, 
+                emoji: "👹", hp: 600 + (currentLevel * 200), maxHp: 600 + (currentLevel * 200), 
+                hitStun: 0, baseSpeed: 2.0, w: 180, h: 180, 
+                isBoss: true, dead: false, shootTimer: 60 
+            });
+            spawnDamageNumber("CHEFE!", canvas.width/2, 200, "#ff0000", 60);
+        }
+        function spawnItem() {
+            let emojis = ["🥦","🥕","🍎","🥩","💊"]; fallingItems.push({ x: Math.random()*(canvas.width-100)+50, y: -50, speed: 4, type: 'good', emoji: emojis[Math.floor(Math.random()*emojis.length)] });
+        }
+        function startSlowMotion(scale, duration) { timeScale = scale; }
+        function createParticles(x, y, color, count) {
+            for(let i=0; i<count; i++) particles.push({ x:x, y:y, vx:(Math.random()-0.5)*15, vy:(Math.random()-0.5)*15, life:1, color:color, size:Math.random()*6+2, type:'spark' });
+        }
+        function createDust(x, y) { createParticles(x, y, "rgba(200,200,200,0.3)", 6); }
+        function createShockwave(x, y, color, max=100) { particles.push({x:x, y:y, size:5, max:max, life:1, type:'wave', color:color}); }
+        function spawnDamageNumber(text, x, y, color, size) { damageNumbers.push({text:text, x:x, y:y, life:1.0, color:color, size:size}); }
+
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                if (p.type === 'wave') {
+                    p.size += 10 * timeScale; p.life -= 0.05 * timeScale;
+                    if(p.life <= 0) { particles.splice(i, 1); continue; }
+                    ctx.save(); ctx.strokeStyle = p.color; ctx.lineWidth = 5 * p.life; ctx.globalAlpha = p.life; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.stroke(); ctx.restore();
+                } else {
+                    p.x += p.vx * timeScale; p.y += p.vy * timeScale; p.life -= 0.05 * timeScale; p.vy += 0.5 * timeScale; 
+                    if (p.life <= 0) { particles.splice(i, 1); continue; }
+                    ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.beginPath(); ctx.fillRect(p.x, p.y, p.size, p.size); ctx.globalAlpha = 1;
+                }
+            }
+            for (let i = damageNumbers.length - 1; i >= 0; i--) {
+                let d = damageNumbers[i]; d.y -= 2 * timeScale; d.life -= 0.02 * timeScale;
+                if(d.life <= 0) { damageNumbers.splice(i, 1); continue; }
+                ctx.save(); ctx.globalAlpha = d.life; ctx.font = `900 ${d.size}px 'Inter'`; ctx.strokeStyle="black"; ctx.lineWidth=4; ctx.fillStyle = d.color; ctx.strokeText(d.text, d.x, d.y); ctx.fillText(d.text, d.x, d.y); ctx.restore();
+            }
+        }
+
+        // --- DRAWING (OTIMIZADO) ---
+        function drawPlayer() {
+            ctx.save(); ctx.translate(player.x + player.w/2, player.y + player.h/2);
+            if (!player.facingRight) ctx.scale(-1, 1);
+            let tilt = (player.vx * 1.5); ctx.rotate(tilt * Math.PI / 180);
+            if (player.invulTimer > 0) if(Math.floor(frame/4) % 2 === 0) ctx.globalAlpha = 0.3; 
+            if (player.isDashing) { ctx.fillStyle = "#00f3ff"; ctx.fillRect(-25, -40, 50, 80); }
+            let bounce = player.grounded ? Math.abs(Math.sin(frame * 0.3) * 3) : 0; ctx.translate(0, bounce);
+            
+            // Corpo
+            ctx.fillStyle = "#111"; 
+            if(Math.abs(player.vx) > 1 && player.grounded) { let lo = Math.sin(frame * 0.5) * 10; ctx.fillRect(-10 + lo, 20, 8, 25); ctx.fillRect(2 - lo, 20, 8, 25); } 
+            else { ctx.fillRect(-10, 20, 8, 25); ctx.fillRect(2, 20, 8, 25); }
+            
+            ctx.fillStyle = "rgba(57, 255, 20, 0.3)";
+            ctx.beginPath(); ctx.moveTo(-22, -29); ctx.lineTo(22, -29); ctx.lineTo(16, 29); ctx.lineTo(-16, 29); ctx.fill();
+
+            // Roupa
+            ctx.fillStyle = "#39ff14"; 
+            ctx.beginPath(); ctx.moveTo(-18, -25); ctx.lineTo(18, -25); ctx.lineTo(12, 25); ctx.lineTo(-12, 25); ctx.fill();
+            
+            // Cabeça
+            ctx.fillStyle = "#ffccaa"; ctx.fillRect(-12, -45, 24, 24); ctx.fillStyle = "#222"; ctx.fillRect(-12, -50, 24, 8); ctx.fillStyle = "#ff073a"; ctx.fillRect(-12, -42, 24, 5); 
+            
+            let bX = -15 - Math.abs(player.vx/2); let bY = -42 + Math.sin(frame*0.5)*5;
+            ctx.beginPath(); ctx.strokeStyle="#ff073a"; ctx.lineWidth=4; ctx.moveTo(-12, -40); ctx.quadraticCurveTo(bX, bY, bX-10, bY+5); ctx.stroke(); ctx.fillStyle = "#000"; ctx.fillRect(4, -40, 4, 4); 
+
+            let pr = 0; if (player.isAttacking) { let prog = player.attackTimer; pr = prog > 10 ? 40 : 40 * (prog/10); ctx.fillStyle = "rgba(255, 255, 255, 0.6)"; ctx.fillRect(10, 0, pr, 12); }
+            ctx.fillStyle = "#ff073a"; ctx.beginPath(); ctx.arc(15 + pr, 6, 12, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = "#fff"; ctx.lineWidth=2; ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawEnemies() {
+            enemies.forEach(e => {
+                ctx.save(); ctx.translate(e.x, e.y);
+                if (e.hitStun > 0) { ctx.globalCompositeOperation = "source-over"; ctx.fillStyle = "white"; ctx.beginPath(); ctx.arc(0, -e.h/2, e.w/1.2, 0, Math.PI*2); ctx.fill(); } 
+                let squash = Math.sin(frame * 0.1) * 0.05; ctx.scale(1 + squash, 1 - squash);
+                
+                if (e.isBoss) {
+                    // === DESENHO NOVO DO BOSS (TRIANGULAR) ===
+                    let w = e.w; let h = e.h;
+                    // Corpo Triangular (Gordura)
+                    let grad = ctx.createLinearGradient(0, -h, 0, 0);
+                    grad.addColorStop(0, "#ffaa00"); grad.addColorStop(1, "#cc5500");
+                    ctx.fillStyle = grad;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(-w/2, -h); // Top Left
+                    ctx.lineTo(w/2, -h);  // Top Right
+                    ctx.quadraticCurveTo(0, h/2, -w/2, -h); // Curve to bottom
+                    ctx.fill();
+                    
+                    // Olhos de Vilão
+                    ctx.fillStyle = "#fff";
+                    ctx.beginPath(); ctx.moveTo(-40, -100); ctx.lineTo(-10, -90); ctx.lineTo(-40, -80); ctx.fill(); // Esq
+                    ctx.beginPath(); ctx.moveTo(40, -100); ctx.lineTo(10, -90); ctx.lineTo(40, -80); ctx.fill();   // Dir
+                    
+                    // Pupilas
+                    ctx.fillStyle = "#ff0000";
+                    ctx.beginPath(); ctx.arc(-25, -90, 5, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(25, -90, 5, 0, Math.PI*2); ctx.fill();
+
+                    // Boca
+                    ctx.fillStyle = "#330000";
+                    ctx.beginPath();
+                    ctx.moveTo(-30, -50);
+                    ctx.lineTo(-10, -40); ctx.lineTo(10, -50); ctx.lineTo(30, -40);
+                    ctx.lineTo(0, -20);
+                    ctx.fill();
+
+                    // Barra de Vida Boss
+                    if (e.hitStun <= 0) {
+                        ctx.fillStyle = "#500"; ctx.fillRect(-w/2, -h - 30, w, 10);
+                        ctx.fillStyle = "#ff00de"; ctx.fillRect(-w/2, -h - 30, w * (e.hp / e.maxHp), 10);
+                        ctx.font = "bold 20px Arial"; ctx.fillStyle = "#fff"; ctx.fillText("REI GORDURA", 0, -h - 40);
+                    }
+                } else {
+                    // Inimigos Normais
+                    ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.beginPath(); ctx.ellipse(0, 0, e.w/2, 10, 0, 0, Math.PI*2); ctx.fill();
+                    ctx.font = `${e.w}px Arial`; ctx.textAlign = "center"; ctx.textBaseline = "bottom"; ctx.fillText(e.emoji, 0, 10);
+                    if (e.hitStun <= 0) {
+                        let bW = e.w; let bY = -e.h - 20;
+                        ctx.fillStyle = "#500"; ctx.fillRect(-bW/2, bY, bW, 8); 
+                        ctx.fillStyle = "#00ff00"; ctx.fillRect(-bW/2, bY, bW * (e.hp / e.maxHp), 8);
+                    }
+                }
+                ctx.restore();
+            });
+        }
+        
+        function drawBossProjectiles() {
+            bossProjectiles.forEach(p => {
+                ctx.save(); ctx.translate(p.x, p.y);
+                ctx.fillStyle = "#ffff00"; // Amarelo
+                ctx.shadowBlur = 10; ctx.shadowColor = "orange";
+                ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI*2); ctx.fill();
+                ctx.restore();
+            });
+        }
+
+        function drawItems() {
+            fallingItems.forEach(item => {
+                ctx.save(); ctx.translate(item.x, item.y); ctx.rotate(frame * 0.05);
+                ctx.strokeStyle = "#39ff14"; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-20, -20); ctx.lineTo(20, 20); ctx.moveTo(20, -20); ctx.lineTo(-20, 20); ctx.stroke();
+                ctx.rotate(-frame * 0.05); ctx.font = "40px Arial"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(item.emoji, 0, 0); ctx.restore();
+            });
+        }
+
+        function screenShake(intensity=1) {
+            const body = document.body; body.style.animation = "none"; void body.offsetWidth; body.style.animation = `shake 0.4s cubic-bezier(.36,.07,.19,.97) both`;
+        }
+
+        function updateUI() {
+            let bar = document.getElementById("healthBar"); bar.style.width = health + "%";
+            if(health < 30) bar.style.background = `repeating-linear-gradient(45deg, #ff0000, #ff0000 10px, #cc0000 10px, #cc0000 20px)`; else bar.style.background = `linear-gradient(90deg, #39ff14, #fff)`;
+            document.getElementById("score").innerText = Math.floor(score) + " PTS";
+            document.getElementById("levelIndicator").innerText = `LVL ${currentLevel}: ${levelData[currentLevel].name}`;
+        }
+
+        function restartGame() {
+            health = 100; score = 0; enemies = []; fallingItems = []; particles = []; damageNumbers = []; bossProjectiles = [];
+            currentLevel = 1; levelProgress = 0; isBossActive = false;
+            document.getElementById('game-wrapper').className = "";
+            player.x = 100; player.vx = 0; player.vy = 0; gameActive = true; 
+            document.getElementById("gameOver").style.display = "none"; 
+            loop();
+        }
+
+        function loop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            if (gameActive) { update(); drawPlayer(); drawBossProjectiles(); drawEnemies(); drawItems(); }
+            if (gameActive) requestAnimationFrame(loop);
+        }
+    </script>
+</body>
+</html>
